@@ -1,8 +1,12 @@
 package com.hoaxify.hoaxify;
 
 import com.hoaxify.hoaxify.user.User;
+import com.hoaxify.hoaxify.user.UserRepository;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -17,19 +21,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserControllerTest {
+    public static final String API_V1_USERS = "/api/v1/users";
+
     @Autowired
     TestRestTemplate testRestTemplate;
 
-    @Test
-    public void postUser_whenUserIsValid_receiveOk() {
+    @Autowired
+    UserRepository userRepository;
+
+    private User createValidUser() {
         User user = new User();
         user.setUsername("test-name");
         user.setDisplayName("test_display");
         user.setPassword("P4ssword");
+        return user;
+    }
 
-        ResponseEntity<Object> responseEntity = testRestTemplate.postForEntity("/api/v1/users", user, Object.class);
+    @Before
+    public void cleanup() {
+        userRepository.deleteAll();
+    }
 
+    @Test
+    public void postUser_whenUserIsValid_receiveOk() {
+        User user = createValidUser();
+        ResponseEntity<Object> responseEntity = testRestTemplate.postForEntity(API_V1_USERS, user, Object.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void postUser_whenUserIsValid_usedSavedToDatabase() {
+        User user = createValidUser();
+        testRestTemplate.postForEntity("/api/v1/users", user, Object.class);
+        assertThat(userRepository.count()).isEqualTo(1);
     }
 }
