@@ -1,5 +1,6 @@
 package com.hoaxify.hoaxify;
 
+import com.hoaxify.hoaxify.shared.GenericResponse;
 import com.hoaxify.hoaxify.user.User;
 import com.hoaxify.hoaxify.user.UserRepository;
 import org.junit.Before;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,5 +59,22 @@ public class UserControllerTest {
         User user = createValidUser();
         testRestTemplate.postForEntity("/api/v1/users", user, Object.class);
         assertThat(userRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    public void postUser_whenUserIsValid_receiveSuccess() {
+        User user = createValidUser();
+        ResponseEntity<GenericResponse> responseEntity = testRestTemplate.postForEntity(API_V1_USERS, user, GenericResponse.class);
+        assertThat(responseEntity.getBody()).isNotNull();
+    }
+    @Test
+    public void postUser_whenUserIsValid_passwordIsHashedInDatabase() {
+        User user = createValidUser();
+        testRestTemplate.postForEntity(API_V1_USERS, user, GenericResponse.class);
+
+        List<User> users = userRepository.findAll();
+        User dbUser = users.get(0);
+
+        assertThat(dbUser.getPassword()).isNotEqualTo(user.getPassword());
     }
 }

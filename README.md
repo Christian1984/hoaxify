@@ -13,3 +13,25 @@
 # Lombok
 
 - instead of creating constructors, getters and setters manually, one can just use the `@Data` annotation from lombok to have all that created automatically for all fields of a DTO
+- if a class has or needs an explicit constructor with arguments, the `@NoArgsConstructor` annotation "forces" lombok to still provide a no args constructor that it would create otherwise anyways
+
+# H2 Database
+
+- to connect to the H2 in-memory database, use the following configuration in the `application.yaml` file:
+
+    ```
+    spring:
+    h2:
+        console:
+        enabled: true
+        path: /h2-console
+    datasource:
+        generate-unique-name: false
+    ```
+
+    then connect to the console at `http://localhost:8080/h2-console`
+
+# Spring Security
+
+- by default, spring security adds security, i.e. the necessity of authenticating, to all endpoints
+- to prevent this during early stages of development, the `SecurityAutoConfiguration` class can be exluded from the application by modifying the entry point annotation as follows: `@SpringBootApplication(exclude = SecurityAutoConfiguration.class)`
