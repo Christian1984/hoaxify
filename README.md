@@ -1,4 +1,6 @@
-# TDD
+# Test Driven Development
+
+## TDD in Spring
 
 - to create a testclass for integration testing, use the `@RunWith(SpringRunner.class)` annotation
 - the `@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)` can be used to run the application at a random port
@@ -9,6 +11,13 @@
 - the advantage of *constructor injection* (as in `UserService`) over *field injection* (via `@Autowired` as in `UserController`) is that we can still create instances of a class ourselves during testing.
 - with `@FixMethodOrder(MethodSorters.NAME_ASCENDING)` the test class can be forced to run the tests in a predefined order. this can be beneficial in some scenarios, but may lead to hiding problems in our test code (as unwanted dependencies of individual tests)
 - a `cleanup()` method can be added to a testclass to clean the database before each test by adding it to the class with the `@Before` annotation
+
+## TDD in React
+
+- tests for a react component in a file `Component.js` usually reside in a file `Component.spec.js` or `Component.test.js`
+- tests can be started in watch mode by running `npm test`
+- `describe` functions can be used to group and organize tests
+- `it` and `test` functions can be used to define the actual tests
 
 # Lombok
 
